@@ -6,6 +6,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import com.dicoding.picodiploma.mysharedpreferences.databinding.ActivityFormUserPreferenceBinding
@@ -35,6 +36,41 @@ class FormUserPreferenceActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(binding.root)
 
         binding.btnSave.setOnClickListener(this)
+
+        userModel = intent.getParcelableExtra<UserModel>("USER") as UserModel
+        val formType = intent.getIntExtra(EXTRA_TYPE_FORM, 0)
+
+        var actionBarTitle = ""
+        var btnTitle = ""
+
+        when (formType) {
+            TYPE_ADD -> {
+                actionBarTitle = "Tambah Baru"
+                btnTitle = "Simpan"
+            }
+            TYPE_EDIT -> {
+                actionBarTitle = "Ubah"
+                btnTitle = "Update"
+                showPrefrenceInform()
+            }
+        }
+
+        supportActionBar?.title = actionBarTitle
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        binding.btnSave.text = btnTitle
+    }
+
+    private fun showPrefrenceInform() {
+        binding.edtName.setText(userModel.name)
+        binding.edtEmail.setText(userModel.email)
+        binding.edtAge.setText(userModel.age)
+        binding.edtPhone.setText(userModel.phoneNumber)
+        if (userModel.isLove) {
+            binding.rbYes.isChecked = true
+        } else {
+            binding.rbNo.isChecked = true
+        }
     }
 
     override fun onClick(v: View) {
@@ -100,6 +136,13 @@ class FormUserPreferenceActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun isValidEmail(email: CharSequence): Boolean {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
+        }
+        return  super.onOptionsItemSelected(item)
     }
 
 
